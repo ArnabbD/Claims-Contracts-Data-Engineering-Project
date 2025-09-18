@@ -1,0 +1,121 @@
+
+Project Architecture: Swiss Re (Coding Assessment)
+_____________________________________________________________________________________________________________________
+
+User-input: This whole project was created with the help of Databricks (free Edition) and with the help of Unity Catalog
+	    all the raw files were converted to a csv file, in my local machine for upload into the volume of Unity Catalog
+	    to further proceed with the ingestion, transformation, orchestration. I have used the best practices to finish 
+	    timed project under the deadline and I'm eager to learn any mistakes or better approaches I should've followed
+	    for enhancement. In the meantime below is a detailed explanation of what I have did to complete this project
+	    along with all the notebooks. Thank you!
+
+
+		Raw CSV (contracts, claims) → Bronze (Delta ingestion)
+         				 ↓
+      		Silver Layer (Cleaning, Mapping, Joining, API Enrichment)
+         				 ↓
+      		Gold Layer (Business-ready Transactions Table)
+
+___________________________________________________________________________________________________________
+
+
+**Input Files: 1) contracts_raw.csv (Contract-level details)
+
+	     2) claims_raw.csv (Claim-level details)
+
+	     3) Storage: Uploaded to Databricks Volumes (Unity CatLog).
+
+___________________________________________________________________________________________________________
+
+*** Bronze Layer (Raw Ingestion) ****
+
+	Raw CSV files ingested into Delta Tables under Unity CatLog → bronze schema.
+
+Characteristics:
+
+		Minimal processing (just ingestion).
+
+		Schema as-is from source.
+
+		Used for traceability & replay in case of issues.
+
+Tables Created:
+
+		1) df_claim_delta
+
+		2) df_contract_delta
+
+
+___________________________________________________________________________________________________________
+
+*** Silver Layer (Cleansed & Conformed Data) ***
+
+	Transformation & cleansing applied in Databricks using PySpark.
+
+Key Transformations:
+
+	1) Standardized column names.
+
+	2) Default value mapping (e.g., Contract Source System → Europe 3).
+
+        3) Mapping Preferred Data Formats for the particular columns i.e. YYYY-MM-DD HH:mm:ss
+
+	4) Standardizing NSE_ID from external NSE API integration.
+
+	5) Business rule mappings (e.g., transaction type, transaction direction).
+
+	6) Joins between Contracts and Claims based on CONTRACT_ID + SOURCE_SYSTEM.
+
+	7) Null handling, schema enforcement and Removing redundant / duplicate data.
+
+	8) Delta Format maintained for optimized performance.
+
+Tables Created:
+
+		1) df_tranformed_nse
+
+		2) df_transformed
+
+		3) df_claim_clean
+
+		4) df_contract_clean	
+
+___________________________________________________________________________________________________________
+
+*** Gold Layer (Business-Ready Data) ***
+
+	Final curated layer for reporting & analytics.
+
+Business Rules Applied:
+
+	1) Mapping transaction direction, type, and conformed values.
+
+	2) Removing redundant / duplicate data.
+
+	3) Enforcing non-null constraints on critical fields (TRANSACTION_TYPE , NSE_ID).
+
+Tables Created:
+
+	1) TRANSACTIONS (Final output table)
+
+	2) df_transactions 
+
+___________________________________________________________________________________________________________
+
+*** Data Governance & Management ***
+
+Unity Catalog handles:
+
+	1) Table organization (bronze, silver, gold schemas).
+
+	2) Access control (role-based permissions).
+
+	3) Schema enforcement.
+
+Delta Lake Features Used:
+
+			1) ACID transactions.
+
+			2) Schema evolution (with controlled updates).
+
+			3) Time travel for debugging.

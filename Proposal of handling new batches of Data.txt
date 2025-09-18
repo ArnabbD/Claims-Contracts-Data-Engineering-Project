@@ -1,0 +1,58 @@
+Proposal 1: Using Auto Loader for Future Improvement
+
+1) In the long run, I would propose using Databricks Auto Loader because it makes the whole ingestion process much more reliable and      automated.
+
+2) Auto Loader automatically picks up only new files when they arrive in the raw data folder.
+
+3) It keeps track of what has already been processed, so we never accidentally load the same file twice or override older data.
+
+4) If the input schema changes (like a new column is added), Auto Loader can handle it gracefully without breaking the pipeline.
+
+5) From there, we can continue with the Bronze → Silver → Gold pipeline like before.
+
+*****This approach is much more scalable and production-ready, especially if the project grows and more data sources get added.***
+
+_______________________________________________________________________________________________________________________
+
+
+Proposal 2: Handling New Batches of Input Data without Overwriting Previous Transactions
+
+
+Raw Ingestion (Bronze Layer): 
+
+1) Always append new incoming batches instead of overwriting.
+
+2) Keep original raw files intact for traceability.
+
+_______________________________________________________________________________________________________________________
+
+Data Cleaning & Deduplication (Silver Layer): 
+
+
+1) Use business keys such as CLAIM_ID or CONTRACT_ID to identify unique records.
+
+2) Apply upserts (insert new, update changed) so that only new or updated records are processed.
+
+_______________________________________________________________________________________________________________________
+
+Transaction History & Snapshots (Gold Layer):
+
+1) Maintain the latest valid version of each transaction.
+
+2) Preserve historical versions for audit and compliance.
+
+_______________________________________________________________________________________________________________________
+
+
+Batch Identification:
+
+1) Introduce a batch_id or ingestion_timestamp column to distinguish records across different loads.
+
+2) Enables debugging and rollback in case of incorrect data loads.
+
+_______________________________________________________________________________________________________________________
+
+
+Result:
+
+Ensures no loss of historical data, prevents accidental overwrites, and guarantees consistent reporting while still handling new incoming data efficiently.

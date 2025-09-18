@@ -1,0 +1,18 @@
+*************************************************************************************
+
+This whole project was made with the help of Databricks Free Edition and Unity Catalog.
+
+1) I made a local csv file of the data put forward in the pdf in my machine and stored it locally.
+
+2) I Uploaded the raw CSV Files in the Bronze Schema of the Unity Catalog to further proceed, and read all the files in bronze layer and created delta tables of the raw data files
+
+3) I transformed the data according to the instructions given on the pdf and did all of the transformations and joins on the silver notebook.
+
+4) In the Gold notebook, I created the final output table put out as Data Architect's Schema Suggested and Put the final output in Delta Table format of in the Gold Schema.
+
+5)I chose the Final output file as Delta because, the whole project was done under Unity Catalog, I tried writing it in parquet file but the DBFS system didn't allow it. SO, I had to choose Delta Table as my last output File.
+
+6) please go-through the Architecture text file to get a detailed view of this project.
+
+
+**************************************ALL FILES HAVE BEEN ATTACHED************************************************
